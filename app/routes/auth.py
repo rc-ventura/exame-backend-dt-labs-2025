@@ -9,7 +9,11 @@ from app.utils.security import hash_password, verify_password, create_access_tok
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 #  Create a new user
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED, 
+                            summary="Create a new user",
+                            description="Registers a new user in the system. The password must be at least 8 characters long.")
+
+
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     username_normalized = user.username.strip().lower()
 
@@ -34,7 +38,11 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return UserResponse(id=new_user.id, username=new_user.username)
 
 #  Authentication endpoint (login)
-@router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK,
+                       summary="Login to the system", 
+                       description="Authenticates the user and provides a JWT token for further requests.")
+
+
 def login(user: UserLogin, db: Session = Depends(get_db)):
     username_normalized = user.username.strip().lower()
 
