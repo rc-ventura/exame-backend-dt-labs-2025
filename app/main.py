@@ -13,6 +13,7 @@ app.include_router(sensor_data.router)
 app.include_router(servers.router)
 app.include_router(health.router)
 
+
 @app.get("/")
 def root():
     return {"message": "API is running"}
