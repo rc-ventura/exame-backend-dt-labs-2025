@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime
 from app.database import get_db
-from app.models import SensorData
+from app.models import SensorData, Server
 from app.schemas import SensorDataResponse, SensorDataCreate
 import ulid
 from typing import List, Optional, Union
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/data", tags=["Sensor Data"])
 def generate_iso_timestamp():
     return datetime.utcnow().isoformat()
 
-@router.post("/", response_model=SensorDataResponse)
+@router.post("/", response_model=SensorDataResponse, status_code=status.HTTP_201_CREATED)
 def register_sensor_data(data: SensorDataCreate, db: Session = Depends(get_db)):
     """
     Registra uma nova leitura de sensores de um servidor no banco de dados.
