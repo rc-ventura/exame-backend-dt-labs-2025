@@ -17,6 +17,9 @@ class Server(Base):
     ulid = Column(String, primary_key=True, nullable=False, unique=True, index=True)
     name = Column(String, unique=True, nullable=False)
 
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)  # Relacionamento com usuário
+    user = relationship("User", back_populates="servers")  # Relacionamento ORM
+
     # Relacionamento: um servidor pode ter vários sensores, mas no máximo um de cada tipo
     sensor_data = relationship("SensorData", back_populates="server", cascade="all, delete-orphan")
 
@@ -46,3 +49,4 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
 
+    servers = relationship("Server", back_populates="user")  # Relacionamento com servidores

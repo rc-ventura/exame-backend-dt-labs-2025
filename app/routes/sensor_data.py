@@ -7,6 +7,7 @@ from app.models import SensorData, Server
 from app.schemas import SensorDataResponse, SensorDataCreate
 import ulid
 from typing import List, Optional, Union
+from app.utils.cache import set_cache_key, get_cache_key
 
 router = APIRouter(prefix="/data", tags=["Sensor Data"])
 
@@ -15,9 +16,11 @@ def generate_iso_timestamp():
     return datetime.utcnow().isoformat()
 
 @router.post("/", response_model=SensorDataResponse, status_code=status.HTTP_201_CREATED)
-def register_sensor_data(data: SensorDataCreate, db: Session = Depends(get_db)):
+async def register_sensor_data(data: SensorDataCreate, db: Session = Depends(get_db)):
     """
     Registra uma nova leitura de sensores de um servidor no banco de dados.
+        E, automaticamente, armazena os dados no cache Redis.
+
     """
 
     # Verifica se o servidor existe
@@ -49,10 +52,14 @@ def register_sensor_data(data: SensorDataCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(sensor_data)
 
-    return sensor_data
+    # Armazena os dados no cache Redis após a inserção no banco de dados
+    await set_cache_key(sensor_data.id, str(sensor_data.__dict__))  
+
+
+    return SensorDataResponse.from_orm(sensor_data)
 
 @router.get("/", response_model=Union[List[SensorDataResponse], List[SensorDataResponse]])
-def get_sensor_data(
+async def get_sensor_data(
     server_ulid: Optional[str] = Query(None, description="Filter by server ULID"),
     start_time: Optional[datetime] = Query(None, description="Start time for filtering"),
     end_time: Optional[datetime] = Query(None, description="End time for filtering"),
@@ -63,11 +70,24 @@ def get_sensor_data(
     Obtém os dados dos sensores, podendo ser filtrado por servidor e intervalo de tempo.
     Se a agregação for informada, calcula a média dos valores dentro do intervalo especificado.
 
+    Esta rota também verifica o cache Redis para os dados.
+
+
     Parâmetros:
     - aggregation: Opcional. Define a granularidade da agregação de dados. Valores possíveis: "minute", "hour", "day".
     """
 
+     # Verificação de cache
+    cache_key = f"sensor_data:{server_ulid}:{start_time}:{end_time}:{aggregation}"  # Gerar chave para cache
+    cached_data = await get_cache_key(cache_key)
+
+    if cached_data:
+        # Caso os dados estejam no cache, retornamos imediatamente
+        return cached_data
+
+    # Caso os dados não estejam no cache, vamos acessar o banco de dados
     query = db.query(SensorData)
+
 
     # Filtra por servidor, se informado
     if server_ulid:

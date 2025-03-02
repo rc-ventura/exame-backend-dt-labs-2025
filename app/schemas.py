@@ -45,16 +45,6 @@ class SensorDataResponse(BaseModel):
     current: Optional[float]
 
     class Config:
-        from_attributes = True
-# -------------------------------
-# 🔹 Schema Health Check verification 
-# -------------------------------
-class ServerHealthResponse(BaseModel):
-    server_ulid: str
-    status: str
-    server_name: str
-
-    class Config:
         orm_mode = True
 
 # -------------------------------
