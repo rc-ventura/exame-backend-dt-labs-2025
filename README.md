@@ -1,115 +1,117 @@
 # exame-backend-dt-labs-2025
 
-# Projeto Exemplo: API de Sensor com Cache, Filas e PostgreSQL
+## Projeto: API de Sensores com Usuários, Cache e Banco de Dados
 
-Este é um projeto de uma API criada com FastAPI para gerenciar dados de sensores, utilizando **Redis** para cache e **PostgreSQL** como banco de dados. O projeto também faz uso de **Docker** e **Docker Compose** para facilitar a configuração e o gerenciamento dos contêineres.
+Este projeto é uma **API RESTful** construída com **FastAPI** para gerenciar dados de sensores, associando-os a servidores e usuários autenticados. Utilizamos **PostgreSQL** como banco de dados, **Redis** para cache e **Docker** para facilitar a configuração e execução dos serviços.
 
-## Tecnologias Utilizadas
+---
 
-- **FastAPI**: Framework para construção de APIs assíncronas em Python.
-- **PostgreSQL**: Sistema de gerenciamento de banco de dados relacional.
-- **Redis**: Armazenamento de dados em memória, usado aqui para cache.
-- **Docker**: Ferramenta para criar e gerenciar contêineres.
-- **Docker Compose**: Utilizado para orquestrar os contêineres Docker.
-- **SQLAlchemy**: ORM (Object Relational Mapper) para interagir com o banco de dados PostgreSQL.
-- **Pydantic**: Biblioteca para validação de dados com base em modelos.
-- **pytest**: Framework de testes para validar a funcionalidade da API.
+## 🚀 **Tecnologias Utilizadas**
 
-## Funcionalidades Implementadas
+- **FastAPI**: Framework moderno para criação de APIs assíncronas em Python.
+- **PostgreSQL**: Banco de dados relacional para armazenar servidores, usuários e dados de sensores.
+- **Redis**: Armazenamento em memória para cache de dados, melhorando a performance das consultas.
+- **Docker & Docker Compose**: Facilita a implantação da API e dos serviços auxiliares.
+- **SQLAlchemy**: ORM utilizado para interagir com o PostgreSQL.
+- **Pydantic**: Biblioteca para validação de dados com modelos estruturados.
+- **pytest**: Framework para criação de testes automatizados.
 
-### 1. **Cadastro de Dados de Sensores**
-- Rota `POST /data`: Recebe dados de sensores (temperatura, umidade, voltagem, corrente) e os armazena no banco de dados.
+---
 
-### 2. **Consulta de Dados de Sensores**
-- Rota `GET /data`: Recupera dados de sensores com possibilidade de filtrar por servidor e por intervalo de tempo.
-- Rota `GET /data?aggregation={level}`: Permite a agregação dos dados em diferentes granularidades (por minuto, hora ou dia).
-  
-### 3. **Cache com Redis**
-- Rota `POST /cache/set`: Armazena dados em cache (utilizando Redis) com uma chave e um valor.
-- Rota `GET /cache/get/{key}`: Recupera dados armazenados no cache utilizando uma chave.
+## ✅ **Funcionalidades Implementadas**
 
-### 4. **Autenticação e Registro de Usuários**
-- Rota `POST /auth/register`: Registra um novo usuário no sistema.
-- Rota `POST /auth/login`: Realiza login do usuário e retorna um token JWT para autenticação.
+### 🔹 **1. Gerenciamento de Servidores**
+- **Rota `POST /servers/`** → Criação de servidores associados ao usuário autenticado.
+- **Rota `GET /servers/{server_ulid}`** → Retorna detalhes de um servidor específico.
+- **Rota `GET /servers/all`** → Lista todos os servidores do usuário autenticado.
 
-## Funcionalidades a Serem Implementadas
+### 🔹 **2. Gerenciamento de Saúde dos Servidores**
+- **Rota `GET /health/{server_ulid}`** → Retorna o status de um servidor específico.
+- **Rota `GET /health/all`** → Retorna o status de todos os servidores pertencentes ao usuário autenticado.
 
-- **Filas (Celery + Redis)**: Implementação de processamento assíncrono de tarefas, como o envio de notificações ou o processamento de grandes volumes de dados.
-- **Agregação de Dados mais Complexa**: Melhorias nas consultas agregadas, incluindo mais filtros e métricas.
-- **Monitoramento e Logs**: Implementação de monitoramento e geração de logs para melhorar a visibilidade da API.
+### 🔹 **3. Cadastro e Consulta de Dados de Sensores**
+- **Rota `POST /data/`** → Cadastra dados de sensores associados a um servidor.
+- **Rota `GET /data/`** → Retorna os dados de sensores com filtros opcionais (servidor e período).
+- **Rota `GET /data?aggregation={level}`** → Agregação de dados de sensores (por minuto, hora ou dia).
 
-## Documentação da API
+### 🔹 **4. Cache com Redis**
+- **Rota `POST /cache/set`** → Armazena dados no cache do Redis.
+- **Rota `GET /cache/get/{key}`** → Recupera dados do cache do Redis.
 
-A API está completamente documentada e pode ser acessada através do Swagger UI integrado ao FastAPI.
+### 🔹 **5. Autenticação e Gerenciamento de Usuários**
+- **Rota `POST /auth/register`** → Registra um novo usuário.
+- **Rota `POST /auth/login`** → Gera um token JWT para autenticação.
+- **JWT Token** → Protege as rotas e identifica automaticamente o usuário autenticado.
 
-1. **Swagger**: Acesse a documentação da API em `http://localhost:8000/docs` após rodar o projeto. Lá você encontrará todas as rotas disponíveis e poderá testar as funcionalidades diretamente.
+---
 
-2. **Redoc**: Também está disponível uma documentação alternativa em `http://localhost:8000/redoc`.
+## 🔧 **Funcionalidades a Serem Implementadas**
 
-## Como Rodar o Projeto
+- **Filas com Celery + Redis** → Para tarefas assíncronas, como notificações e cálculos pesados.
+- **Melhoria nas Consultas de Dados** → Mais filtros e métricas avançadas.
+- **Monitoramento & Logging** → Integração com ferramentas de monitoramento e geração de logs.
+- **Criação de um Frontend** → Desenvolver uma interface gráfica para interação com a API.
 
-### 1. **Clone o Repositório**
+---
 
+## 📄 **Documentação da API**
+
+A API está documentada automaticamente pelo **FastAPI**:
+
+- **Swagger UI** → Acesse `http://localhost:8000/docs`
+- **ReDoc** → Acesse `http://localhost:8000/redoc`
+
+Aqui você pode testar as rotas diretamente e visualizar os modelos de entrada e saída.
+
+---
+
+## ▶️ **Como Rodar o Projeto**
+
+### **1️⃣ Clonar o Repositório**
 ```bash
 git clone https://github.com/seuusuario/exame-backend-dt-labs-2025.git
 cd exame-backend-dt-labs-2025
 ```
 
-### 2. **Configuração do `.env`**
-
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis de ambiente:
-
+### **2️⃣ Configurar o `.env`**
+Crie um arquivo `.env` na raiz do projeto e configure as variáveis:
 ```env
-DATABASE_URL=postgresql://username:password@localhost:5432/dbname
-REDIS_URL=redis://localhost:6379
+DATABASE_URL=postgresql://username:password@db:5432/dbname
+REDIS_URL=redis://redis:6379
 ```
 
-### 3. **Rodando com Docker Compose**
-
-Este projeto está configurado para ser executado com **Docker Compose**, que irá iniciar os contêineres necessários para a API, PostgreSQL e Redis.
-
-#### a. **Construindo e Iniciando os Contêineres**
-
-No diretório raiz do projeto, execute:
-
+### **3️⃣ Rodar o Projeto com Docker Compose**
+Execute o seguinte comando para subir os serviços:
 ```bash
 docker-compose up --build
 ```
 
-Este comando irá:
-- Construir a imagem do Docker para a API.
-- Iniciar o contêiner para a API, banco de dados PostgreSQL e Redis.
+Isso irá iniciar os seguintes serviços:
+- **FastAPI** rodando na porta `8000`
+- **PostgreSQL** rodando na porta `5432`
+- **Redis** rodando na porta `6379`
 
-#### b. **Acessando a API**
+Após iniciado, a API estará disponível em:
+- **Swagger UI** → `http://localhost:8000/docs`
+- **Redoc** → `http://localhost:8000/redoc`
 
-Após a construção dos contêineres, a API estará disponível em:
-
-- **Swagger**: `http://localhost:8000/docs`
-- **Redoc**: `http://localhost:8000/redoc`
-
-#### c. **Parando os Contêineres**
-
-Para parar os contêineres, execute:
-
+### **4️⃣ Parar os Contêineres**
 ```bash
 docker-compose down
 ```
 
-## Docker Compose Configuration
+---
 
-Aqui está o `docker-compose.yml` para rodar o projeto com PostgreSQL, Redis e a API:
+## 🐳 **Configuração do `docker-compose.yml`**
 
 ```yaml
 version: '3.7'
 
 services:
   app:
-    image: python:3.9-slim
+    build: .
     container_name: fastapi_app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - .:/app
-    working_dir: /app
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
@@ -151,21 +153,63 @@ volumes:
   postgres_data:
 ```
 
-### Explicação do `docker-compose.yml`:
-- **app**: Contêiner para a API, que executa o FastAPI com Uvicorn.
-- **db**: Contêiner para o PostgreSQL, com configuração de usuário, senha e banco de dados.
-- **redis**: Contêiner para o Redis, usado como cache.
-- **volumes**: Volume persistente para os dados do PostgreSQL.
+---
 
-### 4. **Executando os Testes**
+## ✅ **Executando os Testes**
 
-Você pode rodar os testes de unidade utilizando o `pytest`. Para rodar os testes, basta executar o seguinte comando:
+Para rodar os testes, primeiro entre no container do FastAPI:
+```bash
+docker exec -it fastapi_app bash
+```
 
+Dentro do container, execute os testes com:
 ```bash
 pytest
 ```
 
-## Contribuindo
+Se quiser um relatório detalhado, use:
+```bash
+pytest -v
+```
 
-Se você quiser contribuir para o projeto, fique à vontade para fazer um fork, criar uma branch e submeter um pull request.
+Para sair do container, utilize:
+```bash
+exit
+```
+
+Caso prefira rodar os testes sem entrar no container, utilize:
+```bash
+docker exec -it fastapi_app pytest
+```
+
+Isso executará os testes automatizados para validar a API.
+
+---
+
+## 🤝 **Contribuindo**
+
+Se você deseja contribuir com o projeto, siga os passos abaixo:
+
+1. Faça um **fork** do repositório.
+2. Crie uma **branch** para suas alterações: `git checkout -b minha-feature`
+3. Faça commit das alterações: `git commit -m 'Adicionando nova funcionalidade'`
+4. Faça **push** para sua branch: `git push origin minha-feature`
+5. Abra um **Pull Request** para revisão.
+
+---
+
+## 🔥 **Conclusão**
+
+Este projeto fornece uma API robusta para gerenciamento de sensores e servidores, utilizando autenticação JWT, cache com Redis e persistência de dados com PostgreSQL. 🚀
+
+Agora com suporte a **usuários autenticados**, cada servidor pertence ao seu respectivo dono, garantindo segurança e melhor organização dos dados. 💡
+
+**Falta a criação de um frontend para facilitar a interação com a API.**
+
+Para dúvidas ou sugestões, abra uma **issue** no GitHub!
+
+---
+
+🎯 **Autor:** Rafael Ventura  
+🔗 **Repositório:** [GitHub](https://github.com/rc-ventura/exame-backend-dt-labs-2025)
 
